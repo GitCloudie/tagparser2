@@ -1,19 +1,44 @@
+// const express = require('express')
+import fs from 'fs';
+import express from 'express';
+const app = express()
 import Zet from './lib/zet.js';
 
 // Declarations
-import http from 'http';  
-import fs from 'fs';
+// import http from 'http';  
 
 // Initialization
-const g_Port = 80;
+const port = 80;
 
-async function mainHandler(request, response) {
-    response.writeHead(200, { "Content-Type": 'text/html' });
-    response.end('<h1>Hello World</h1>', "utf-8");
+async function mainHandler(request, response) {  
+    console.log('Request:', request.url);
+    let content = '';
+    switch (request.url) {
+        case '/index.html':
+        case '/':
+            content = fs.readFileSync('./pages/index.html');
+            response.writeHead(200, { "Content-Type": 'text/html' });
+            response.end(content, "utf-8");        
+            break;
+        default:
+            content = 'Error';
+            try {
+                content = fs.readFileSync('.'+request.url);
+            } catch (error) {
+                console.error(error);
+            }
+            //response.writeHead(200, { "Content-Type": 'text/html' });
+            response.end(content, "utf-8");     
+            break;
+    }
 }
-
-const g_Server = http.createServer(mainHandler).listen(g_Port);
-console.log('Server is running');
+app.get('/*', mainHandler);
+app.use(express.static('static'))
+app.listen(port, () => {
+    console.log(`Callosal HUB listening on port ${port}`)
+});
+// const g_Server = http.createServer(mainHandler).listen(g_Port);
+// console.log('Server is running');
 
 
 let a = new Zet(["A", "B", "C"]);
