@@ -1,7 +1,7 @@
 import Zet from './lib/zet.js';
 
 // Declarations
-import http from 'http';
+import http from 'http'; 
 import fs from 'fs';
 
 // Initialization
